@@ -1,0 +1,36 @@
+{
+	"name": "stackspot",
+	"version": "0.0.1",
+	"description": "Stackspot API bindings for NodeJS",
+	"main": "main.mjs",
+	"types": "main.d.ts",
+	"type": "module",
+	"files": [
+		"main.mjs",
+		"main.d.ts",
+		"libs/**/*",
+		"README.md",
+		"LICENSE"
+	],
+	"keywords": [
+		"stackspot",
+		"ai",
+		"artificial",
+		"inteligence",
+		"zup"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Potentii/stackspot.git"
+	},
+	"bugs": {
+		"url": "https://github.com/Potentii/stackspot/issues"
+	},
+	"homepage": "https://github.com/Potentii/stackspot#readme",
+	"author": "Guilherme Reginaldo Ruella<potentii@gmail.com>",
+	"license": "MIT",
+	"dependencies": {
+		"node-fetch": "3.3.2",
+		"form-data": "4.0.0"
+	}
+}
