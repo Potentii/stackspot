@@ -16,10 +16,20 @@ export declare interface StackspotAuthTokenResponse{
 export declare class StackspotAuth{
 	#root: Stackspot;
 	#tokenResponse: StackspotAuthTokenResponse | undefined;
+	#getAt: number | undefined;
 
 	constructor(root: Stackspot);
 
+	/**
+	 * Fetches a new authentication token.
+	 * @private
+	 * @returns {Promise<StackspotAuthTokenResponse>}
+	 */
 	async #fetchToken(): Promise<StackspotAuthTokenResponse>;
+	/**
+	 * Retrieves a new access token, or uses the cached one if it stills valid.
+	 * @returns {Promise<?string>}
+	 */
 	async getAccessToken(): Promise<string | undefined>;
 
 }

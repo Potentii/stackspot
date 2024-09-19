@@ -1,9 +1,15 @@
 # Stackspot
 
+<center>
+
+<img src="./docs/images/simbolo-stk.svg" width="128px">
+
 [![NPM Version][npm-image]][npm-url]
 
-
 [Stackspot](https://stackspot.com/) API bindings for NodeJS.
+
+</center>
+
 
 <br>
 
@@ -13,18 +19,21 @@
 # Content
 
 <!-- TOC -->
-- [Installation](#installation)
-- [Usage](#usage)
-  - [⚙️ Configuration](#-configuration)
-  - [🛜 Using behind proxy](#-using-behind-proxy)
-- [Methods](#methods)
-  - [✨ AI](#-ai)
-    - [AI - Create a new Knowledge Source](#ai---create-a-new-knowledge-source)
-    - [AI - Upload new file to a Knowledge Source](#ai---upload-new-file-to-a-knowledge-source)
-    - [AI - Remove files from a Knowledge Source](#ai---remove-files-from-a-knowledge-source)
-  - [🗝️ Auth](#-auth)
-    - [Auth - Get the access token](#auth---get-the-access-token)
-- [License](#license)
+* [Installation](#installation)
+* [Usage](#usage)
+  * [⚙ Configuration](#-configuration)
+  * [🌐 Using behind proxy](#-using-behind-proxy)
+* [Methods](#methods)
+  * [✨ AI](#-ai)
+    * [AI - KS - Create a new Knowledge Source](#ai---ks---create-a-new-knowledge-source)
+    * [AI - KS - Upload new file to a Knowledge Source](#ai---ks---upload-new-file-to-a-knowledge-source)
+    * [AI - KS - Remove files from a Knowledge Source](#ai---ks---remove-files-from-a-knowledge-source)
+    * [AI - Quick Command - Create a new execution](#ai---quick-command---create-a-new-execution)
+    * [AI - Quick Command - Get execution](#ai---quick-command---get-execution)
+    * [AI - Quick Command - Poll execution until it's done](#ai---quick-command---poll-execution-until-its-done)
+  * [🗝️ Auth](#-auth)
+    * [Auth - Get the access token](#auth---get-the-access-token)
+* [License](#license)
 <!-- TOC -->
 
 
@@ -68,7 +77,7 @@ await Stackspot.instance.ai.ks.createKs('new-ks-test-api-2', 'New KS test', 'Thi
 
 ---
 
-### ⚙️ Configuration
+### ⚙ Configuration
 
 You can **configure** the global instance:
 
@@ -106,7 +115,7 @@ myInstance.setClientId('...');
 
 ---
 
-### 🛜 Using behind proxy
+### 🌐 Using behind proxy
 
 Internally it uses [`node-fetch`](https://github.com/node-fetch/node-fetch) to make requests, so you can provide a **custom HTTP agent** to configure **proxy** and **SSL certificates**.
 
@@ -138,7 +147,7 @@ All the **AI** related functions are bellow `Stackspot.instance.ai` namespace.
 
 <br>
 
-#### AI - Create a new Knowledge Source
+#### AI - KS - Create a new Knowledge Source
 
 To **create** a new _Knowledge Source_, just run:
 
@@ -151,7 +160,7 @@ For more info about the **KS creation**, check out the official documentation: h
 
 <br>
 
-#### AI - Upload new file to a Knowledge Source
+#### AI - KS - Upload new file to a Knowledge Source
 
 You can **add** or **update** existing objects inside a _Knowledge Source_:
 
@@ -170,7 +179,7 @@ await Stackspot.instance.ai.ks.uploadKsObject('my-ks-slug', 'test.txt', fileCont
 
 <br>
 
-#### AI - Remove files from a Knowledge Source
+#### AI - KS - Remove files from a Knowledge Source
 
 To **batch remove** files from a _Knowledge Source_:
 
@@ -187,6 +196,49 @@ await Stackspot.instance.ai.ks.batchRemoveKsObjects('my-ks-slug', 'STANDALONE');
 ```javascript
 // This removes only the UPLOADED objects from the KS:
 await Stackspot.instance.ai.ks.batchRemoveKsObjects('my-ks-slug', 'UPLOADED');
+```
+
+<br>
+
+#### AI - Quick Command - Create a new execution
+
+To manually **create** a new _Quick Command_ execution:
+
+```javascript
+const executionId = await Stackspot.instance.ai.quickCommand.createExecution('my-quick-command-slug', 'Input for this execution');
+// Return example: "06J85YZZ5HVO1XXCKKR4TJ16N2"
+```
+
+<br>
+
+#### AI - Quick Command - Get execution
+
+After creating a new _Quick Command_ execution, you may want to **check it** to see if it has completed successfully, and get its result:
+
+```javascript
+const execution = await Stackspot.instance.ai.quickCommand.getExecution('06J85YZZ5HVO1XXCKKR4TJ16N2');
+
+console.log('status: ' + execution.progress?.status);
+```
+
+_**Obs.:** Note that, at the time this call have been made, the execution may not yet be done, so you have to write some polling logic, or use the ['pollExecution'](#ai---quick-command---poll-execution-until-its-done) method._
+
+<br>
+
+#### AI - Quick Command - Poll execution until it's done
+
+It can be cumbersome to write the logic to **poll** a _Quick Command_ execution after its creation to check if it's done. This library gets you covered on that:
+
+```javascript
+// Just create a new execution:
+const executionId = await Stackspot.instance.ai.quickCommand.createExecution('my-quick-command-slug', 'Input for this execution');
+
+// And call the poll method:
+// This will check the execution status until it's done and then return the execution object:
+const execution = await Stackspot.instance.ai.quickCommand.pollExecution(executionId);
+
+console.log('status: ' + execution.progress?.status); // 'COMPLETED'
+console.log('result: ' + execution.result); // The Quick Command result.
 ```
 
 <br>

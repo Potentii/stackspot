@@ -1,6 +1,6 @@
 {
 	"name": "stackspot",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"description": "Stackspot API bindings for NodeJS",
 	"main": "main.mjs",
 	"types": "main.d.ts",
@@ -14,9 +14,13 @@
 	],
 	"keywords": [
 		"stackspot",
-		"ai",
+		"knowledge",
+		"source",
+		"quick",
+		"command",
 		"artificial",
 		"inteligence",
+		"ai",
 		"zup"
 	],
 	"repository": {

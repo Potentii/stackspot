@@ -1,6 +1,7 @@
 import fetch, {FormData} from "node-fetch";
 import StackspotAiKs from "./stackspot-ai-ks.mjs";
 import StackspotApiError from "./stackspot-api-error.mjs";
+import StackspotAiQuickCommand from "./stackspot-ai-quick-command.mjs";
 
 
 export default class StackspotAi {
@@ -12,13 +13,20 @@ export default class StackspotAi {
 	/**
 	 * @type {StackspotAiKs}
 	 */
-	#ks = new StackspotAiKs(this);
+	#ks;
+	/**
+	 * @type {StackspotAiQuickCommand}
+	 */
+	#quickCommand;
+
+
 
 	constructor(root) {
 		if(!root)
 			throw new TypeError(`Stackspot: Invalid root object "${root}"`);
 		this.#root = root;
 		this.#ks = new StackspotAiKs(root);
+		this.#quickCommand = new StackspotAiQuickCommand(root);
 	}
 
 
@@ -28,6 +36,15 @@ export default class StackspotAi {
 	 */
 	get ks(){
 		return this.#ks;
+	}
+
+
+	/**
+	 * Access to Quick Commands module
+	 * @returns {StackspotAiQuickCommand}
+	 */
+	get quickCommand(){
+		return this.#quickCommand;
 	}
 
 

@@ -16,7 +16,7 @@ export default class Stackspot {
 
 
 	/**
-	 * Creates a new stackspot instance.
+	 * Creates a new Stackspot instance.
 	 * @param {?StackspotOpts} [opts]
 	 */
 	constructor(opts) {
@@ -25,8 +25,8 @@ export default class Stackspot {
 
 
 	/**
-	 * Completely reconfigure this stackspot instance.
-	 * @param {?StackspotOpts} [opts] The new stackspot options, if not set it will use the environment variables to configure this instance.
+	 * Completely reconfigure this Stackspot instance.
+	 * @param {?StackspotOpts} [opts] The new Stackspot options, if not set it will use the environment variables to configure this instance.
 	 */
 	config(opts){
 		this.#clientId = opts?.clientId || process.env.STACKSPOT_CLIENT_ID;
@@ -39,7 +39,7 @@ export default class Stackspot {
 
 
 	/**
-	 * Gets the global stackspot singleton instance.
+	 * Gets the global Stackspot singleton instance.
 	 */
 	static get instance(){
 		if(!_instance)
@@ -90,7 +90,7 @@ export default class Stackspot {
 
 
 	/**
-	 * Access the stackspot auth module.
+	 * Access the Stackspot Auth module.
 	 * @returns {StackspotAuth}
 	 */
 	get auth(){
@@ -98,7 +98,7 @@ export default class Stackspot {
 	}
 
 	/**
-	 * Access the stackspot AI module.
+	 * Access the Stackspot AI module.
 	 * @returns {StackspotAi}
 	 */
 	get ai(){
