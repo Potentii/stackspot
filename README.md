@@ -207,7 +207,7 @@ This will get the **cached token**, or **fetch a new one** if they aren't valid 
 await Stackspot.instance.auth.getAccessToken();
 ```
 
-_**Obs.:** To configure the authentication properties like `clientId`, `clientSecret`, and `realm`, head back to the [Usage section](#-configuration)._
+_**Obs.:** To configure the authentication properties like `clientId`, `clientSecret`, and `realm`, head back to the [Usage section](#usage)._
 
 
 <br>
