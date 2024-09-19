@@ -1,6 +1,6 @@
 import {Stackspot} from "./stackspot";
-import {ReadStream} from "node:fs";
-import {Buffer} from "node:buffer";
+import {StackspotAiKs} from "./stackspot-ai-ks";
+import Buffer from "buffer"
 
 export declare interface StackspotAiContentUploadForm{
 	key: string,
@@ -20,11 +20,12 @@ export declare interface StackspotAiContentUpload{
 
 export declare class StackspotAi{
 	#root: Stackspot;
+	#ks: StackspotAiKs;
 
 	constructor(root: Stackspot);
 
-	async openUploadContentForm(targetType: string, targetId: string, fileName: string, expiration?: number): Promise<StackspotAiContentUpload>;
-	async uploadContent(upload: StackspotAiContentUpload, content: ReadStream | Buffer | string, contentSize: number): Promise<void>;
-	async ksUploadContent(ksSlug: string, fileName: string, content: ReadStream | Buffer | string, contentSize: number, upload?: StackspotAiContentUpload | undefined): Promise<void>;
+	get ks(): StackspotAiKs;
 
+	async openUploadContentForm(targetType: string|'KNOWLEDGE_SOURCE', targetId: string, fileName: string, expiration?: number): Promise<StackspotAiContentUpload>;
+	async uploadContent(upload: StackspotAiContentUpload, content: Buffer | string): Promise<void>;
 }

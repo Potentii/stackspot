@@ -1,22 +1,43 @@
-import fetch from "node-fetch";
-import * as FormData from "form-data";
+import fetch, {FormData} from "node-fetch";
+import StackspotAiKs from "./stackspot-ai-ks.mjs";
+import StackspotApiError from "./stackspot-api-error.mjs";
 
 
 export default class StackspotAi {
 
+	/**
+	 * @type {Stackspot}
+	 */
 	#root;
+	/**
+	 * @type {StackspotAiKs}
+	 */
+	#ks = new StackspotAiKs(this);
 
 	constructor(root) {
+		if(!root)
+			throw new TypeError(`Stackspot: Invalid root object "${root}"`);
 		this.#root = root;
+		this.#ks = new StackspotAiKs(root);
+	}
+
+
+	/**
+	 * Access to Knowledge Source module
+	 * @returns {StackspotAiKs}
+	 */
+	get ks(){
+		return this.#ks;
 	}
 
 
 	/**
 	 * Starts a new upload form, call this method before attempting to upload any file, and use the returned information to execute the upload itself. But be aware that some upload methods already opens a new form by default.
-	 * @param targetType The target type to upload this file (e.g. 'KNOWLEDGE_SOURCE').
-	 * @param targetId The target ID (if it's a KS, use the KS slug identifier).
-	 * @param fileName The desired name of the file.
-	 * @param expiration The form's expiration timeout (in seconds), defaults to 600.
+	 * @param {string|'KNOWLEDGE_SOURCE'} targetType The target type to upload this file (e.g. 'KNOWLEDGE_SOURCE').
+	 * @param {string} targetId The target ID (if it's a KS, use the KS slug identifier).
+	 * @param {string} fileName The desired name of the file.
+	 * @param {number} [expiration] The form's expiration timeout (in seconds), defaults to 600.
+	 * @returns {Promise<StackspotAiContentUpload>}
 	 */
 	async openUploadContentForm(targetType, targetId, fileName, expiration = 600){
 		const res = await fetch(
@@ -38,7 +59,7 @@ export default class StackspotAi {
 		);
 
 		if(res.status > 299)
-			throw new Error(`Error opening new upload form (status ${res.status}): ${await res.text()}`);
+			throw new StackspotApiError(res.status, `UPLOAD_FORM_CREATE_ERROR`, `Error opening new upload form`, await res.text());
 
 		return await res.json();
 	}
@@ -46,11 +67,11 @@ export default class StackspotAi {
 
 	/**
 	 * Uploads a new content to an open Upload form.
-	 * @param upload The upload form, use the {@code openUploadContentForm} to open a new one.
-	 * @param content The content to upload, it can be a stream, a buffer, or a string.
-	 * @param contentSize The size of the content/file in bytes.
+	 * @param {StackspotAiContentUpload} upload The upload form, use the {@code openUploadContentForm} to open a new one.
+	 * @param {Buffer|string} content The content to upload, it can be a buffer or a string.
+	 * @returns {Promise<void>}
 	 */
-	async uploadContent(upload, content, contentSize){
+	async uploadContent(upload, content){
 
 		const formData = new FormData();
 		const body = {
@@ -68,32 +89,15 @@ export default class StackspotAi {
 			{
 				method: 'post',
 				body: formData,
-				headers: {
-					'Content-Length': '' + contentSize,
-				},
 				agent: this.#root.agent,
 			}
 		);
 
 		if(res.status > 299)
-			throw new Error(`Error uploading new content (status ${res.status}): ${await res.text()}`);
+			throw new StackspotApiError(res.status, `UPLOAD_ERROR`, `Error uploading new content`, await res.text());
 	}
 
 
-	/**
-	 * Uploads new content to a Knowledge Source.
-	 * @param ksSlug The KS slug identifier.
-	 * @param fileName The desired file name.
-	 * @param content The content to upload, it can be a stream, a buffer, or a string.
-	 * @param contentSize The size of the content/file in bytes.
-	 * @param upload If you want to reuse another upload form to upload more files, you can pass it here. It must be a 'KNOWLEDGE_SOURCE' upload form, otherwise this might upload the content to an undesired location.
-	 */
-	async ksUploadContent(ksSlug, fileName, content, contentSize, upload){
-		if(!upload)
-			upload = await this.openUploadContentForm('KNOWLEDGE_SOURCE', ksSlug, fileName);
-
-		return this.uploadContent(upload, content, contentSize);
-	}
 
 
 }

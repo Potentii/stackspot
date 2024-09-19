@@ -3,10 +3,10 @@ import {StackspotAuth} from "./stackspot-auth";
 import {StackspotAi} from "./stackspot-ai";
 
 export declare interface StackspotOpts{
-	clientId: string | undefined,
-	clientSecret: string | undefined,
-	realm: string | undefined,
-	agent: Agent | undefined,
+	clientId?: string | undefined,
+	clientSecret?: string | undefined,
+	realm?: string | undefined,
+	agent?: Agent | undefined,
 }
 
 export declare class Stackspot{
@@ -20,7 +20,14 @@ export declare class Stackspot{
 
 	constructor(opts?: StackspotOpts);
 
-	get instance(): Stackspot;
+	config(opts?: StackspotOpts);
+
+	setClientId(clientId: string | undefined): Stackspot;
+	setClientSecret(clientSecret: string | undefined): Stackspot;
+	setRealm(realm: string | undefined): Stackspot;
+	setAgent(agent: Agent | undefined): Stackspot;
+
+	static get instance(): Stackspot;
 
 	get auth(): StackspotAuth;
 	get ai(): StackspotAi;

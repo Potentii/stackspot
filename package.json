@@ -1,6 +1,6 @@
 {
 	"name": "stackspot",
-	"version": "0.0.1",
+	"version": "1.0.0",
 	"description": "Stackspot API bindings for NodeJS",
 	"main": "main.mjs",
 	"types": "main.d.ts",
@@ -30,7 +30,6 @@
 	"author": "Guilherme Reginaldo Ruella<potentii@gmail.com>",
 	"license": "MIT",
 	"dependencies": {
-		"node-fetch": "3.3.2",
-		"form-data": "4.0.0"
+		"node-fetch": "3.3.2"
 	}
 }
