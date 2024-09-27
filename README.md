@@ -72,7 +72,7 @@ import { Stackspot } from 'stackspot';
 // - STACKSPOT_REALM
 
 // Creating a new 'Knowledge Source' for example:
-await Stackspot.instance.ai.ks.createKs('new-ks-test-api-2', 'New KS test', 'This is a test KS', 'CUSTOM');
+await Stackspot.instance.ai.ks.createKs('new-ks-test', 'New KS test', 'This is a test KS', 'CUSTOM');
 ```
 
 ---
@@ -82,7 +82,7 @@ await Stackspot.instance.ai.ks.createKs('new-ks-test-api-2', 'New KS test', 'Thi
 You can **configure** the global instance:
 
 ```javascript
-// Using the 'config(opts)' method, to update the all the settings at once:
+// Using the 'config(opts)' method, to update all the settings at once:
 Stackspot.instance.config({
 	clientId: '...',
 	clientSecret: '...',

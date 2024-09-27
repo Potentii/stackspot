@@ -17,7 +17,7 @@ export default class Stackspot {
 
 	/**
 	 * Creates a new Stackspot instance.
-	 * @param {?StackspotOpts} [opts]
+	 * @param {?StackspotOpts} [opts] The Stackspot options, if not set it will use the environment variables to configure this instance.
 	 */
 	constructor(opts) {
 		this.config(opts);
@@ -55,6 +55,7 @@ export default class Stackspot {
 	 */
 	setClientId(clientId){
 		this.#clientId = clientId;
+		this.#auth._invalidateToken();
 		return this;
 	}
 
@@ -65,6 +66,7 @@ export default class Stackspot {
 	 */
 	setClientSecret(clientSecret){
 		this.#clientSecret = clientSecret;
+		this.#auth._invalidateToken();
 		return this;
 	}
 
@@ -75,6 +77,7 @@ export default class Stackspot {
 	 */
 	setRealm(realm){
 		this.#realm = realm;
+		this.#auth._invalidateToken();
 		return this;
 	}
 

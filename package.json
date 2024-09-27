@@ -1,6 +1,6 @@
 {
 	"name": "stackspot",
-	"version": "1.1.0",
+	"version": "1.1.1",
 	"description": "Stackspot API bindings for NodeJS",
 	"main": "main.mjs",
 	"types": "main.d.ts",
@@ -33,7 +33,14 @@
 	"homepage": "https://github.com/Potentii/stackspot#readme",
 	"author": "Guilherme Reginaldo Ruella<potentii@gmail.com>",
 	"license": "MIT",
+	"scripts": {
+		"test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+	},
 	"dependencies": {
 		"node-fetch": "3.3.2"
+	},
+	"devDependencies": {
+		"jest": "29.7.0",
+		"@types/jest": "29.5.13"
 	}
 }
