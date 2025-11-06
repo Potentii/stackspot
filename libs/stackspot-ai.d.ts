@@ -23,6 +23,7 @@ export declare class StackspotAi{
 	#root: Stackspot;
 	#ks: StackspotAiKs;
 	#quickCommand: StackspotAiQuickCommand;
+	#agents: StackspotAiAgents;
 
 	constructor(root: Stackspot);
 
@@ -36,6 +37,11 @@ export declare class StackspotAi{
 	 * @returns {StackspotAiQuickCommand}
 	 */
 	get quickCommand(): StackspotAiQuickCommand;
+	/**
+	 * Access to Agents module
+	 * @returns {StackspotAiAgents}
+	 */
+	get agents(): StackspotAiAgents;
 
 	/**
 	 * Starts a new upload form, call this method before attempting to upload any file, and use the returned information to execute the upload itself. But be aware that some upload methods already opens a new form by default.

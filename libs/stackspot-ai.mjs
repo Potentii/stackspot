@@ -2,6 +2,7 @@ import fetch, {FormData} from "node-fetch";
 import StackspotAiKs from "./stackspot-ai-ks.mjs";
 import StackspotApiError from "./stackspot-api-error.mjs";
 import StackspotAiQuickCommand from "./stackspot-ai-quick-command.mjs";
+import StackspotAiAgents from "./stackspot-ai-agents.mjs";
 
 
 export default class StackspotAi {
@@ -18,6 +19,10 @@ export default class StackspotAi {
 	 * @type {StackspotAiQuickCommand}
 	 */
 	#quickCommand;
+	/**
+	 * @type {StackspotAiAgents}
+	 */
+	#agents;
 
 
 
@@ -27,6 +32,7 @@ export default class StackspotAi {
 		this.#root = root;
 		this.#ks = new StackspotAiKs(root);
 		this.#quickCommand = new StackspotAiQuickCommand(root);
+		this.#agents = new StackspotAiAgents(root);
 	}
 
 
@@ -45,6 +51,15 @@ export default class StackspotAi {
 	 */
 	get quickCommand(){
 		return this.#quickCommand;
+	}
+
+
+	/**
+	 * Access to Agents module
+	 * @returns {StackspotAiAgents}
+	 */
+	get agents(){
+		return this.#agents;
 	}
 
 
