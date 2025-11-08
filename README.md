@@ -2,7 +2,7 @@
 
 <center>
 
-<img src="./docs/images/simbolo-stk.svg" width="128px">
+<img src="./docs/images/logo-2025.svg" width="128px">
 
 [![NPM Version][npm-image]][npm-url]
 
@@ -28,6 +28,9 @@
     * [AI - KS - Create a new Knowledge Source](#ai---ks---create-a-new-knowledge-source)
     * [AI - KS - Upload new file to a Knowledge Source](#ai---ks---upload-new-file-to-a-knowledge-source)
     * [AI - KS - Remove files from a Knowledge Source](#ai---ks---remove-files-from-a-knowledge-source)
+    * [AI - Agents - Send prompt (non-streaming)](#ai---agents---send-prompt-non-streaming)
+    * [AI - Agents - Send prompt (streaming)](#ai---agents---send-prompt-streaming)
+    * [AI - Agents - Send prompt with file upload](#ai---agents---send-prompt-with-file-upload)
     * [AI - Quick Command - Create a new execution](#ai---quick-command---create-a-new-execution)
     * [AI - Quick Command - Get execution](#ai---quick-command---get-execution)
     * [AI - Quick Command - Poll execution until it's done](#ai---quick-command---poll-execution-until-its-done)
@@ -196,6 +199,99 @@ await Stackspot.instance.ai.ks.batchRemoveKsObjects('my-ks-slug', 'STANDALONE');
 ```javascript
 // This removes only the UPLOADED objects from the KS:
 await Stackspot.instance.ai.ks.batchRemoveKsObjects('my-ks-slug', 'UPLOADED');
+```
+
+<br>
+
+#### AI - Agents - Send prompt (non-streaming)
+
+To send a prompt to an Agent and get the full response at once (no streaming):
+
+```javascript
+// Calling the agent:
+const res = await Stackspot.instance.ai.agents.sendPrompt('my-agent-id', 'Hello agent!');
+
+console.log(res.message); // Full response message
+```
+
+You can optionally enable Stackspot Knowledge and/or ask the API to return KS info in the response:
+
+```javascript
+const res = await Stackspot.instance.ai.agents.sendPrompt(
+  'my-agent-id',
+  'Answer using the knowledge base if needed.',
+  {
+    stackspot_knowledge: true,
+    return_ks_in_response: true,
+  }
+);
+
+console.log(res.message); // Full response message
+```
+
+<br>
+
+#### AI - Agents - Send prompt (streaming)
+
+For real-time tokens, use the streaming API. It returns an object with a `collector` and an `eventEmitter`:
+
+```javascript
+const { collector, eventEmitter } = await Stackspot.instance.ai.agents.sendPromptStreaming(
+  'my-agent-id',
+  'A list of best movies to watch'
+);
+
+// Listen to partial lines as they arrive:
+eventEmitter.on('line', (line, data) => {
+  // Each JSON line may contain a partial `message`
+  if (data?.message)
+	  process.stdout.write(json.message);
+});
+
+// Handle errors:
+eventEmitter.on('error', (err) => {
+  console.error('Streaming error:', err);
+});
+
+// Called when the stream is closed:
+eventEmitter.on('close', (code) => {
+  console.log('\nStream closed with code:', code);
+  console.log('Final assembled message:', collector.messageBuffer);
+});
+```
+
+If you prefer the raw **Node.js stream**, you can use `sendPromptStreamingRaw(agentId, prompt, opts)` which returns the underlying stream body.
+
+<br>
+
+#### AI - Agents - Send prompt with file upload
+
+You can upload a file to be used by the Agent in the context of a prompt. First upload the file, then send your prompt referencing the returned `upload.id`:
+
+```javascript
+// Upload a file (Buffer or string):
+const upload = await Stackspot.instance.ai.agents.uploadFileForAgents(
+  'notes.txt',
+  'These are my notes the agent should consider.'
+);
+
+// Send the prompt referencing the uploaded content:
+const res = await Stackspot.instance.ai.agents.sendPrompt(
+  'my-agent-id',
+  'Please summarize the uploaded notes.',
+  {
+    upload_ids: [upload.id],
+  }
+);
+
+console.log(res.message);
+```
+
+You can also read the file from disk:
+
+```javascript
+const content = await fs.promises.readFile('./notes.txt'); // Buffer
+await Stackspot.instance.ai.agents.uploadFileForAgents('notes.txt', content);
 ```
 
 <br>

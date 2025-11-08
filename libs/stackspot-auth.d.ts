@@ -31,5 +31,10 @@ export declare class StackspotAuth{
 	 * @returns {Promise<?string>}
 	 */
 	async getAccessToken(): Promise<string | undefined>;
+	/**
+	 * Forces to retrieve a new access token.
+	 * For most use cases you should use {@link getAccessToken} instead.
+	 */
+	async getNewAccessToken(): Promise<string | undefined>;
 
 }

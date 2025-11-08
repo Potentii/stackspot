@@ -49,6 +49,8 @@ export default class StackspotAiQuickCommand {
 			}
 		);
 
+		if(res.status === 404)
+			throw new StackspotApiError(res.status, `QUICK_COMMAND_CREATE_EXECUTION_NOT_FOUND_ERROR`, `Quick Command not found with slug "${slug}"`, await res.text());
 		if(res.status > 299)
 			throw new StackspotApiError(res.status, `QUICK_COMMAND_CREATE_EXECUTION_ERROR`, `Error creating new Quick Command execution`, await res.text());
 

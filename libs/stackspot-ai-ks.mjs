@@ -8,10 +8,10 @@ export default class StackspotAiKs {
 	 */
 	#root;
 
-	/**
-	 *
-	 * @param {Stackspot} root
-	 */
+	// /**
+	//  *
+	//  * @param {Stackspot} root
+	//  */
 	constructor(root) {
 		if(!root)
 			throw new TypeError(`Stackspot: Invalid root object "${root}"`);
@@ -19,17 +19,17 @@ export default class StackspotAiKs {
 	}
 
 
-	/**
-	 * Creates a new Knowledge Source.
-	 * @param {string} slug The slug ID of this new KS. It must be unique, and it CANNOT be changed later.
-	 * @param {string} name The KS display name.
-	 * @param {string} description The KS description.
-	 * @param {string|'API'|'SNIPPET'|'CUSTOM'} type The KS type. It must be either 'API', 'SNIPPET', or 'CUSTOM'. For more information, please visit {@link https://ai.stackspot.com/docs/knowledge-source/ks#types-of-knowledge-objects}.
-	 * @returns {Promise<void>}
-	 */
+	// /**
+	//  * Creates a new Knowledge Source.
+	//  * @param {string} slug The slug ID of this new KS. It must be unique, and it CANNOT be changed later.
+	//  * @param {string} name The KS display name.
+	//  * @param {string} description The KS description.
+	//  * @param {string|'API'|'SNIPPET'|'CUSTOM'} type The KS type. It must be either 'API', 'SNIPPET', or 'CUSTOM'. For more information, please visit {@link https://ai.stackspot.com/docs/knowledge-source/ks#types-of-knowledge-objects}.
+	//  * @returns {Promise<void>}
+	//  */
 	async createKs(slug, name, description, type){
 		const res = await fetch(
-			`https://genai-code-buddy-api.stackspot.com/v1/knowledge-sources`,
+			`https://data-integration-api.stackspot.com/v1/knowledge-sources`,
 			{
 				method: 'post',
 				body: JSON.stringify({
@@ -50,12 +50,12 @@ export default class StackspotAiKs {
 			throw new StackspotApiError(res.status, `KS_CREATE_ERROR`, `Error creating new Knowledge Source`, await res.text());
 	}
 
-	/**
-	 * Removes multiple objects from a Knowledge Source.
-	 * @param {string} slug The slug ID of the KS.
-	 * @param {string|'ALL'|'STANDALONE'|'UPLOADED'} mode The remove mode. Valid values are: 'ALL' (Removes all objects from KS), 'STANDALONE' (Removes only standalone objects), 'UPLOADED' (Removes only uploaded objects). For more information, please visit {@link https://ai.stackspot.com/docs/knowledge-source/create-update-via-api#delete-knowledge-sources-objects}.
-	 * @returns {Promise<void>}
-	 */
+	// /**
+	//  * Removes multiple objects from a Knowledge Source.
+	//  * @param {string} slug The slug ID of the KS.
+	//  * @param {string|'ALL'|'STANDALONE'|'UPLOADED'} mode The remove mode. Valid values are: 'ALL' (Removes all objects from KS), 'STANDALONE' (Removes only standalone objects), 'UPLOADED' (Removes only uploaded objects). For more information, please visit {@link https://ai.stackspot.com/docs/knowledge-source/create-update-via-api#delete-knowledge-sources-objects}.
+	//  * @returns {Promise<void>}
+	//  */
 	async batchRemoveKsObjects(slug, mode){
 		if(!['ALL','STANDALONE','UPLOADED'].includes(mode))
 			throw new TypeError(`Cannot batch remove Knowledge Source objects, invalid mode "${mode}"`);
@@ -65,7 +65,7 @@ export default class StackspotAiKs {
 			: '?' + new URLSearchParams({ standalone: mode === 'STANDALONE' }).toString();
 
 		const res = await fetch(
-			`https://genai-code-buddy-api.stackspot.com/v1/knowledge-sources/${slug}/objects${query}`,
+			`https://data-integration-api.stackspot.com/v1/knowledge-sources/${slug}/objects${query}`,
 			{
 				method: 'delete',
 				headers: {
@@ -80,17 +80,18 @@ export default class StackspotAiKs {
 	}
 
 
-	/**
-	 * Uploads new content to a Knowledge Source.
-	 * @param {string} slug The KS slug identifier.
-	 * @param {string} fileName The desired file name.
-	 * @param {Buffer|string} content The content to upload, it can be a buffer or a string.
-	 * @param {?StackspotAiContentUpload} [upload] If you want to reuse another upload form to upload more files, you can pass it here. It must be a 'KNOWLEDGE_SOURCE' upload form, otherwise this might upload the content to an undesired location.
-	 * @returns {Promise<void>}
-	 */
-	async uploadKsObject(slug, fileName, content, upload){
+	// /**
+	//  * Uploads new content to a Knowledge Source.
+	//  * @param {string} slug The KS slug identifier.
+	//  * @param {string} fileName The desired file name.
+	//  * @param {Buffer|string} content The content to upload, it can be a buffer or a string.
+	//  * @param {?StackspotAiContentUpload} [upload] If you want to reuse another upload form to upload more files, you can pass it here. It must be a 'KNOWLEDGE_SOURCE' upload form, otherwise this might upload the content to an undesired location.
+	//  * @param {number} [expiration] The form's expiration timeout (in seconds), defaults to 600.
+	//  * @returns {Promise<void>}
+	//  */
+	async uploadKsObject(slug, fileName, content, upload, expiration = 600){
 		if(!upload)
-			upload = await this.#root.ai.openUploadContentForm('KNOWLEDGE_SOURCE', slug, fileName);
+			upload = await this.#root.ai.openUploadContentForm('KNOWLEDGE_SOURCE', slug, fileName, expiration);
 
 		return this.#root.ai.uploadContent(upload, content);
 	}

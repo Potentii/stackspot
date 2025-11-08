@@ -6,6 +6,10 @@ import {Stackspot} from "./stackspot";
 export declare class StackspotAiKs{
 	#root: Stackspot;
 
+	/**
+	 *
+	 * @param {Stackspot} root
+	 */
 	constructor(root: Stackspot);
 
 	/**
@@ -30,8 +34,9 @@ export declare class StackspotAiKs{
 	 * @param {string} fileName The desired file name.
 	 * @param {Buffer|string} content The content to upload, it can be a buffer or a string.
 	 * @param {?StackspotAiContentUpload} [upload] If you want to reuse another upload form to upload more files, you can pass it here. It must be a 'KNOWLEDGE_SOURCE' upload form, otherwise this might upload the content to an undesired location.
+	 * @param {number?} [expiration] The form's expiration timeout (in seconds), defaults to 600.
 	 * @returns {Promise<void>}
 	 */
-	async uploadKsObject(slug: string, fileName: string, content: Buffer | string, upload?: StackspotAiContentUpload | undefined): Promise<void>;
+	async uploadKsObject(slug: string, fileName: string, content: Buffer | string, upload?: StackspotAiContentUpload | undefined, expiration?: number = 600): Promise<void>;
 
 }

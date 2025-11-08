@@ -1,6 +1,6 @@
 {
 	"name": "stackspot",
-	"version": "1.1.1",
+	"version": "1.2.0",
 	"description": "Stackspot API bindings for NodeJS",
 	"main": "main.mjs",
 	"types": "main.d.ts",
@@ -34,13 +34,17 @@
 	"author": "Guilherme Reginaldo Ruella<potentii@gmail.com>",
 	"license": "MIT",
 	"scripts": {
-		"test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+		"test": "npm run test:all",
+		"test:all": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
+		"test:ci": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage --runInBand --passWithNoTests",
+		"test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch"
 	},
 	"dependencies": {
-		"node-fetch": "3.3.2"
+		"node-fetch": "3.3.2",
+		"eventemitter3": "5.0.1"
 	},
 	"devDependencies": {
-		"jest": "29.7.0",
-		"@types/jest": "29.5.13"
+		"jest": "30.2.0",
+		"@types/jest": "30.0.0"
 	}
 }

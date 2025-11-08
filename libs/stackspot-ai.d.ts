@@ -13,6 +13,9 @@ export declare interface StackspotAiContentUploadForm{
 	'x-amz-signature': string,
 }
 export declare interface StackspotAiContentUpload{
+	/**
+	 * The upload ID.
+	 */
 	id: string,
 	url: string,
 	form: StackspotAiContentUploadForm,
@@ -23,6 +26,7 @@ export declare class StackspotAi{
 	#root: Stackspot;
 	#ks: StackspotAiKs;
 	#quickCommand: StackspotAiQuickCommand;
+	#agents: StackspotAiAgents;
 
 	constructor(root: Stackspot);
 
@@ -36,6 +40,11 @@ export declare class StackspotAi{
 	 * @returns {StackspotAiQuickCommand}
 	 */
 	get quickCommand(): StackspotAiQuickCommand;
+	/**
+	 * Access to Agents module
+	 * @returns {StackspotAiAgents}
+	 */
+	get agents(): StackspotAiAgents;
 
 	/**
 	 * Starts a new upload form, call this method before attempting to upload any file, and use the returned information to execute the upload itself. But be aware that some upload methods already opens a new form by default.
@@ -45,7 +54,7 @@ export declare class StackspotAi{
 	 * @param {number} [expiration] The form's expiration timeout (in seconds), defaults to 600.
 	 * @returns {Promise<StackspotAiContentUpload>}
 	 */
-	async openUploadContentForm(targetType: string|'KNOWLEDGE_SOURCE', targetId: string, fileName: string, expiration?: number): Promise<StackspotAiContentUpload>;
+	async openUploadContentForm(targetType: string|'KNOWLEDGE_SOURCE'|'CONTEXT', targetId: string, fileName: string, expiration?: number): Promise<StackspotAiContentUpload>;
 	/**
 	 * Uploads a new content to an open Upload form.
 	 * @param {StackspotAiContentUpload} upload The upload form, use the {@code openUploadContentForm} to open a new one.

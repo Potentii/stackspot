@@ -31,6 +31,7 @@ export declare interface StackspotAiQuickCommandExecutionCallbackStepResult{
 	json_data?: object | undefined,
 	answer?: string | undefined,
 	sources?: Array | undefined,
+	tools?: Array | undefined,
 }
 export declare interface StackspotAiQuickCommandExecutionCallbackStep{
 	step_name: string,
@@ -43,6 +44,7 @@ export declare interface StackspotAiQuickCommandExecutionCallback{
 	execution_id: string,
 	quick_command_slug: string,
 	conversation_id: string,
+	execution_tag?: string | undefined,
 	result?: string | undefined,
 	progress?: StackspotAiQuickCommandExecutionCallbackProgress | undefined,
 	steps?: StackspotAiQuickCommandExecutionCallbackStep[] | undefined,
