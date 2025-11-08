@@ -1,6 +1,7 @@
 import fetch from "node-fetch";
 import StackspotApiError from "./stackspot-api-error.mjs";
 import EventEmitter from 'eventemitter3';
+import StackspotError from "./stackspot-error.mjs";
 
 export default class StackspotAiAgents {
 
@@ -10,10 +11,10 @@ export default class StackspotAiAgents {
 	#root;
 
 
-	/**
-	 *
-	 * @param {Stackspot} root
-	 */
+	// /**
+	//  *
+	//  * @param {Stackspot} root
+	//  */
 	constructor(root) {
 		if(!root)
 			throw new TypeError(`Stackspot: Invalid root object "${root}"`);
@@ -28,10 +29,11 @@ export default class StackspotAiAgents {
 			{
 				method: 'post',
 				body: JSON.stringify({
-					"streaming": false,
-					"user_prompt": prompt,
-					"stackspot_knowledge": opts.stackspotKnowledge || false,
-					"return_ks_in_response": opts.returnKsInResponse || false,
+					streaming: false,
+					user_prompt: prompt,
+					stackspot_knowledge: opts?.stackspot_knowledge || false,
+					return_ks_in_response: opts?.return_ks_in_response || false,
+					upload_ids: opts?.upload_ids || undefined,
 				}),
 				headers: {
 					'Authorization': `Bearer ${await this.#root.auth.getAccessToken()}`,
@@ -41,11 +43,10 @@ export default class StackspotAiAgents {
 			}
 		);
 
-		if(res.status > 299) {
-			if(res.status === 403)
-				throw new StackspotApiError(res.status, `AGENTS_SEND_PROMPT_PERMISSION_ERROR`, `Error sending prompt to Agent, not authorized to perform this action`, await res.text());
+		if(res.status === 403)
+			throw new StackspotApiError(res.status, `AGENTS_SEND_PROMPT_PERMISSION_ERROR`, `Error sending prompt to Agent, not authorized to perform this action`, await res.text());
+		if(res.status > 299)
 			throw new StackspotApiError(res.status, `AGENTS_SEND_PROMPT_ERROR`, `Error sending prompt to Agent`, await res.text());
-		}
 
 		return res.json();
 	}
@@ -58,10 +59,11 @@ export default class StackspotAiAgents {
 			{
 				method: 'post',
 				body: JSON.stringify({
-					"streaming": true,
-					"user_prompt": prompt,
-					"stackspot_knowledge": opts.stackspotKnowledge || false,
-					"return_ks_in_response": opts.returnKsInResponse || false,
+					streaming: true,
+					user_prompt: prompt,
+					stackspot_knowledge: opts?.stackspot_knowledge || false,
+					return_ks_in_response: opts?.return_ks_in_response || false,
+					upload_ids: opts?.upload_ids || undefined,
 				}),
 				headers: {
 					'Authorization': `Bearer ${await this.#root.auth.getAccessToken()}`,
@@ -71,11 +73,10 @@ export default class StackspotAiAgents {
 			}
 		);
 
-		if(res.status > 299) {
-			if(res.status === 403)
-				throw new StackspotApiError(res.status, `AGENTS_SEND_PROMPT_PERMISSION_ERROR`, `Error sending prompt to Agent, not authorized to perform this action`, await res.text());
+		if(res.status === 403)
+			throw new StackspotApiError(res.status, `AGENTS_SEND_PROMPT_PERMISSION_ERROR`, `Error sending prompt to Agent, not authorized to perform this action`, await res.text());
+		if(res.status > 299)
 			throw new StackspotApiError(res.status, `AGENTS_SEND_PROMPT_ERROR`, `Error sending prompt to Agent`, await res.text());
-		}
 
 		return res.body;
 	}
@@ -136,7 +137,7 @@ export default class StackspotAiAgents {
 							eventEmitter.emit('close', 0);
 						}
 					} catch (err) {
-						eventEmitter.emit('error', new Error(`Failed to parse line: "${line}"`));
+						eventEmitter.emit('error', new StackspotError(`AGENT_SEND_PROMPT_LINE_PARSE_ERROR`, `Failed to parse line: "${line}"`, err));
 					}
 				}
 			}
@@ -169,6 +170,22 @@ export default class StackspotAiAgents {
 			collector,
 			eventEmitter,
 		};
+	}
+
+
+
+
+	// /**
+	//  * Uploads files to be used by agents context.
+	//  * @param {string} fileName The desired file name.
+	//  * @param {Buffer|string} content The content to upload, it can be a buffer or a string.
+	//  * @param {number} [expiration] The form's expiration timeout (in seconds), defaults to 60.
+	//  * @returns {Promise<StackspotAiContentUpload>}
+	//  */
+	async uploadFileForAgents(fileName, content, expiration = 60){
+		const upload = await this.#root.ai.openUploadContentForm('CONTEXT', undefined, fileName, expiration);
+		await this.#root.ai.uploadContent(upload, content);
+		return upload;
 	}
 
 

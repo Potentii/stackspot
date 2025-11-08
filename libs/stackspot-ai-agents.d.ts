@@ -19,7 +19,9 @@ export declare interface AgentPromptStreamingResultLineJson{
 	source?: Array<AgentPromptStreamingResultLineJsonSource> | undefined,
 	cross_account_source?: Array<AgentPromptStreamingResultLineJsonSource> | undefined,
 	tools_id?: Array<any> | undefined,
-
+	/**
+	 * The reason the agent stopped generating the response.
+	 */
 	stop_reason?: string | undefined | 'stop',
 	/**
 	 * Information about the tokens used in this response.
@@ -29,8 +31,17 @@ export declare interface AgentPromptStreamingResultLineJson{
 
 
 export declare interface AgentPromptStreamingResultCollector{
+	/**
+	 * The agent message will be streamed to this string as they receives it.
+	 */
 	messageBuffer: string,
+	/**
+	 * The raw agent response lines will be streamed to this array as they receive it.
+	 */
 	linesRaw: Array<string>,
+	/**
+	 * The agent response lines will be streamed to this array as they receive it, as JSON objects.
+	 */
 	linesJson: Array<AgentPromptStreamingResultLineJson>,
 }
 
@@ -82,30 +93,48 @@ export declare class AgentPromptStreamingEventEmitter extends EventEmitter {
 
 
 export declare interface AgentPromptStreamingResult{
+	/**
+	 * An object that will collect the stream data.
+	 */
 	collector: AgentPromptStreamingResultCollector,
+	/**
+	 * An event emitter that will emit the stream data and errors.
+	 */
 	eventEmitter: AgentPromptStreamingEventEmitter,
 }
 
 
 
 export declare interface AgentPromptResultToken{
+	/**
+	 * Consumed tokens to process the prompt.
+	 */
 	user?: number | undefined,
+	/**
+	 * Consumed tokens to enrich the response, like Knowledge Sources for example.
+	 */
 	enrichment?: number | undefined,
 	/**
-	 * The number of tokens used by the prompt input.
+	 * Consumed tokens by the prompt input.
 	 */
 	input?: number | undefined,
 	/**
-	 * The number of tokens used by the prompt output.
+	 * Consumed tokens to generate the final response.
 	 */
 	output?: number | undefined,
 }
 
 export declare interface AgentPromptResult{
+	/**
+	 *
+	 */
 	message?: string | undefined,
+	/**
+	 *
+	 */
 	stop_reason?: string | undefined | 'stop',
 	/**
-	 * Information about the tokens used in this response.
+	 * Information about the tokens consumed by this execution.
 	 */
 	tokens?: Array<AgentPromptResultToken> | undefined,
 }
@@ -114,24 +143,35 @@ export declare interface AgentPromptOpts{
 	/**
 	 *
 	 */
-	stackspotKnowledge?: boolean,
+	stackspot_knowledge?: boolean | undefined,
 	/**
-	 *
+	 * Includes the Knowledge Source IDs used in the response.
 	 */
-	returnKsInResponse?: boolean,
+	return_ks_in_response?: boolean | undefined,
+	/**
+	 * A list of uploaded file IDs to be included in the agent's context in this execution.
+	 */
+	upload_ids?: Array<string> | undefined,
 }
 
 
-export declare class StackspotAiAgents{
+export declare class StackspotAiAgents {
 	#root: Stackspot;
 
-	constructor(root: Stackspot);
 
 	/**
 	 *
-	 * @param {string} agentId
-	 * @param {string} prompt
-	 * @param {?AgentPromptOpts} [opts]
+	 * @param {Stackspot} root
+	 */
+	constructor(root: Stackspot);
+
+
+	/**
+	 * Sends a prompt to an agent.
+	 * It will wait for the agent to finish its execution and return the result.
+	 * @param {string} agentId The agent ID.
+	 * @param {string} prompt The prompt to be sent.
+	 * @param {?AgentPromptOpts} [opts] Agent execution additional options.
 	 * @returns {Promise<AgentPromptResult>}
 	 */
 	async sendPrompt(
@@ -142,10 +182,12 @@ export declare class StackspotAiAgents{
 
 
 	/**
-	 *
-	 * @param {string} agentId
-	 * @param {string} prompt
-	 * @param {?AgentPromptOpts} [opts]
+	 * Sends a prompt to an agent.
+	 * It will stream the agent's response as it's being generated.
+	 * It's preferable to use {@link sendPromptStreaming} instead, unless you need to access the raw stream and parse it yourself.
+	 * @param {string} agentId The agent ID.
+	 * @param {string} prompt The prompt to be sent.
+	 * @param {?AgentPromptOpts} [opts] Agent execution additional options.
 	 * @returns {Promise<ReadableStream>}
 	 */
 	async sendPromptStreamingRaw(
@@ -156,10 +198,13 @@ export declare class StackspotAiAgents{
 
 
 	/**
-	 *
-	 * @param {string} agentId
-	 * @param {string} prompt
-	 * @param {?AgentPromptOpts} [opts]
+	 * Sends a prompt to an agent.
+	 * It will stream the agent's response as it's being generated.
+	 * It will parse the response as readable stream of JSON objects.
+	 * The last message will generally be a JSON object with the 'stop_reason' and the overall information about the execution.
+	 * @param {string} agentId The agent ID.
+	 * @param {string} prompt The prompt to be sent.
+	 * @param {?AgentPromptOpts} [opts] Agent execution additional options.
 	 * @returns {Promise<AgentPromptStreamingResult>}
 	 */
 	async sendPromptStreaming(
@@ -167,5 +212,20 @@ export declare class StackspotAiAgents{
 		prompt: string,
 		opts?: AgentPromptOpts | undefined
 	): Promise<AgentPromptStreamingResult>;
+
+
+	/**
+	 * Uploads files to be used by the agents context.
+	 * @param {string} fileName The desired file name.
+	 * @param {Buffer|string} content The content to upload, it can be a buffer or a string.
+	 * @param {number?} [expiration] The form's expiration timeout (in seconds), defaults to 60.
+	 * @returns {Promise<StackspotAiContentUpload>}
+	 */
+	async uploadFileForAgents(
+		fileName: string,
+		content: Buffer | string,
+		expiration?: number = 60,
+	): Promise<StackspotAiContentUpload>;
+
 
 }

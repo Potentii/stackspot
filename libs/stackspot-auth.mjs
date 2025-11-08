@@ -96,6 +96,18 @@ export default class StackspotAuth {
 		return this.#tokenResponse?.access_token;
 	}
 
+	/**
+	 * Forces to retrieve a new access token.
+	 * For most use cases you should use {@link getAccessToken} instead.
+	 * @returns {Promise<?string>}
+	 */
+	async getNewAccessToken(){
+		this.#tokenResponse = await this.#fetchToken();
+		this.#getAt = Date.now();
+
+		return this.#tokenResponse?.access_token;
+	}
+
 
 	/**
 	 * Cleans the cached token

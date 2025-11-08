@@ -167,4 +167,26 @@ describe('Stackspot - AI - Agents', () => {
 
 
 
+	it('uploadFileForAgents should open form, upload content and return the upload object', async () => {
+		const root = mockRoot();
+		const agents = new StackspotAiAgents(root);
+
+		const fileName = 'test.txt';
+		const content = 'Hello Agents';
+		const uploadStub = { url: 'https://upload.example/form', form: { k: 'v' }, id: 'upload-1' };
+
+		// Ensure our stub is returned
+		root.ai.openUploadContentForm.mockResolvedValueOnce(uploadStub);
+
+		const res = await agents.uploadFileForAgents(fileName, content);
+
+		expect(root.ai.openUploadContentForm).toHaveBeenCalledTimes(1);
+		expect(root.ai.openUploadContentForm).toHaveBeenCalledWith('CONTEXT', undefined, fileName, 60);
+
+		expect(root.ai.uploadContent).toHaveBeenCalledTimes(1);
+		expect(root.ai.uploadContent).toHaveBeenCalledWith(uploadStub, content);
+
+		expect(res).toBe(uploadStub);
+	});
+
 });

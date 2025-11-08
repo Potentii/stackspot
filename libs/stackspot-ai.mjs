@@ -65,7 +65,7 @@ export default class StackspotAi {
 
 	/**
 	 * Starts a new upload form, call this method before attempting to upload any file, and use the returned information to execute the upload itself. But be aware that some upload methods already opens a new form by default.
-	 * @param {string|'KNOWLEDGE_SOURCE'} targetType The target type to upload this file (e.g. 'KNOWLEDGE_SOURCE').
+	 * @param {string|'KNOWLEDGE_SOURCE'|'CONTEXT'} targetType The target type to upload this file (e.g. 'KNOWLEDGE_SOURCE').
 	 * @param {string} targetId The target ID (if it's a KS, use the KS slug identifier).
 	 * @param {string} fileName The desired name of the file.
 	 * @param {number} [expiration] The form's expiration timeout (in seconds), defaults to 600.
@@ -73,7 +73,7 @@ export default class StackspotAi {
 	 */
 	async openUploadContentForm(targetType, targetId, fileName, expiration = 600){
 		const res = await fetch(
-			`https://genai-code-buddy-api.stackspot.com/v1/file-upload/form`,
+			`https://data-integration-api.stackspot.com/v2/file-upload/form`,
 			{
 				method: 'post',
 				body: JSON.stringify({

@@ -142,7 +142,7 @@ describe('Stackspot - AI - KS', () => {
 
 		await ks.uploadKsObject('ks1', 'file.txt', 'content');
 
-		expect(root.ai.openUploadContentForm).toHaveBeenCalledWith('KNOWLEDGE_SOURCE', 'ks1', 'file.txt');
+		expect(root.ai.openUploadContentForm).toHaveBeenCalledWith('KNOWLEDGE_SOURCE', 'ks1', 'file.txt', 600);
 		const upload = await root.ai.openUploadContentForm.mock.results[0].value;
 		expect(root.ai.uploadContent).toHaveBeenCalledWith(upload, 'content');
 	});
